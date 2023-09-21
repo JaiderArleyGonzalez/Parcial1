@@ -16,7 +16,7 @@ public class Main {
 
     public static void main(String a[]) {
         int count = 10;
-        int N = 2;
+        int N = 3;
         int chunkSize = count / N;
         
         String current = "";
@@ -52,7 +52,7 @@ public class Main {
 
                         current = bytesToHex(threads.get(i).getDigits());
                     }else{
-                        current += bytesToHex(threads.get(i).getDigits());
+                        current += '-'+bytesToHex(threads.get(i).getDigits());
                     }
                 }
                 System.out.println(current);
