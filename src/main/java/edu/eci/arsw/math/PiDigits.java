@@ -18,7 +18,7 @@ public class PiDigits {
      * @param count The number of digits to return
      * @return An array containing the hexadecimal digits.
      */
-    public static byte[] getDigits(int start, int count) {
+    public synchronized static byte[] getDigits(int start, int count, int N) {
         if (start < 0) {
             throw new RuntimeException("Invalid Interval");
         }

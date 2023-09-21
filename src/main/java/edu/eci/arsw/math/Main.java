@@ -5,6 +5,7 @@
  */
 package edu.eci.arsw.math;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -14,9 +15,49 @@ import java.util.Arrays;
 public class Main {
 
     public static void main(String a[]) {
-        System.out.println(bytesToHex(PiDigits.getDigits(0, 10)));
-        System.out.println(bytesToHex(PiDigits.getDigits(1, 100)));
-        System.out.println(bytesToHex(PiDigits.getDigits(1, 1000000)));
+        int count = 10;
+        int N = 2;
+        int chunkSize = count / N;
+        
+        String current = "";
+        ArrayList<PiThread> threads = new ArrayList<>();
+        for(int i = 0; i < N; i++){
+            int startIndex = i * chunkSize;
+            int endIndex = (i == N - 1) ? count : (i + 1) * chunkSize;
+            PiThread thread = new PiThread(startIndex, endIndex, N);
+            threads.add(thread);
+            
+        }
+        for (PiThread thread : threads){
+            thread.start();
+        }
+        
+        
+        if(threads.size() == 1){
+            try {
+                threads.get(0).join();
+                System.out.println(bytesToHex(threads.get(0).getDigits()));
+                } catch (InterruptedException e) {        
+                    e.printStackTrace();
+                }
+                    
+                }else{
+                for(int i = 0; i < threads.size(); i++){
+                    try {
+                        threads.get(i).join();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    if(i==0){
+
+                        current = bytesToHex(threads.get(i).getDigits());
+                    }else{
+                        current += bytesToHex(threads.get(i).getDigits());
+                    }
+                }
+                System.out.println(current);
+            }
+
     }
 
     private final static char[] hexArray = "0123456789ABCDEF".toCharArray();
@@ -35,5 +76,5 @@ public class Main {
         }
         return sb.toString();
     }
-
+    
 }
