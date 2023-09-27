@@ -7,56 +7,65 @@ package edu.eci.arsw.math;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Scanner;
 
 /**
  *
  * @author hcadavid
  */
 public class Main {
-
+    private static Monitor monitor = new Monitor();
     public static void main(String a[]) {
         int count = 10;
-        int N = 3;
+        int N = 4;
         int chunkSize = count / N;
         
         String current = "";
         ArrayList<PiThread> threads = new ArrayList<>();
         for(int i = 0; i < N; i++){
             int startIndex = i * chunkSize;
-            int endIndex = (i == N - 1) ? count : (i + 1) * chunkSize;
-            PiThread thread = new PiThread(startIndex, endIndex, N);
+            chunkSize = (i == N - 1) ? count - chunkSize * i : chunkSize;
+            PiThread thread = new PiThread(startIndex, chunkSize, N, monitor);
             threads.add(thread);
             
         }
         for (PiThread thread : threads){
             thread.start();
         }
-        
-        
-        if(threads.size() == 1){
-            try {
-                threads.get(0).join();
-                System.out.println(bytesToHex(threads.get(0).getDigits()));
-                } catch (InterruptedException e) {        
-                    e.printStackTrace();
-                }
-                    
-                }else{
+        while(Thread.activeCount() > 1){
+            try{
+                Thread.sleep(5000);
+                monitor.suspenderHilos();
+                
                 for(int i = 0; i < threads.size(); i++){
-                    try {
-                        threads.get(i).join();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    if(i==0){
-
-                        current = bytesToHex(threads.get(i).getDigits());
-                    }else{
-                        current += '-'+bytesToHex(threads.get(i).getDigits());
-                    }
+                    System.out.println(threads.get(i).getName()+" ha procesado: "+threads.get(i).getDatos());
+                    current += bytesToHex(threads.get(i).getDigits());      
+                }
+                System.out.println("Así va la cadena: "+ current);
+                Scanner escaner = new Scanner(System.in);
+                System.out.println("Presione enter para continuar");
+                String entrada = escaner.nextLine();
+                
+                monitor.reanudarHilos(); 
+            } catch (InterruptedException e){
+                e.printStackTrace();
+            }
+            
+            
+        }
+        for(int i = 0; i < threads.size(); i++){
+                try {
+                    threads.get(i).join();
+                    
+                    
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }   
+                    
                 }
                 System.out.println(current);
-            }
+        
+        
 
     }
 

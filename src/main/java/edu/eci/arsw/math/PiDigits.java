@@ -1,5 +1,7 @@
 package edu.eci.arsw.math;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 ///  <summary>
 ///  An implementation of the Bailey-Borwein-Plouffe formula for calculating hexadecimal
 ///  digits of pi.
@@ -11,7 +13,7 @@ public class PiDigits {
     private static int DigitsPerSum = 8;
     private static double Epsilon = 1e-17;
 
-    
+    private static AtomicInteger datos = new AtomicInteger(0);
     /**
      * Returns a range of hexadecimal digits of pi.
      * @param start The starting location of the range.
@@ -43,10 +45,13 @@ public class PiDigits {
             sum = 16 * (sum - Math.floor(sum));
             digits[i] = (byte) sum;
         }
-
+        datos.set(count);
         return digits;
     }
-
+    
+    public synchronized static int getDatos(){
+        return datos.get();
+    }
     /// <summary>
     /// Returns the sum of 16^(n - k)/(8 * k + m) from 0 to k.
     /// </summary>
