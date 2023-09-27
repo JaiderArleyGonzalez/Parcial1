@@ -1,5 +1,7 @@
 package edu.eci.arsw.math;
-
+/*
+ * Esta clase es la encargada de ser el monitor principal para cada hilo, desde aquí se pausan y se activan
+ */
 public class Monitor {
     
     private boolean suspendido = false;

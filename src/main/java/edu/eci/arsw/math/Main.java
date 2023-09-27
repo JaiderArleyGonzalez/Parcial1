@@ -24,7 +24,7 @@ public class Main {
         ArrayList<PiThread> threads = new ArrayList<>();
         for(int i = 0; i < N; i++){
             int startIndex = i * chunkSize;
-            chunkSize = (i == N - 1) ? count - chunkSize * i : chunkSize;
+            chunkSize = (i == N - 1) ? count - chunkSize * i : chunkSize; //Se calcula el índice de inicio del fragmento actual y se ajusta el tamaño del fragmento chunkSize dependiendo del valor de i.
             PiThread thread = new PiThread(startIndex, chunkSize, N, monitor);
             threads.add(thread);
             
@@ -32,21 +32,21 @@ public class Main {
         for (PiThread thread : threads){
             thread.start();
         }
-        while(Thread.activeCount() > 1){
+        while(Thread.activeCount() > 1){ //verifica la cantidad de hilos activos durante el ciclo
             try{
-                Thread.sleep(5000);
+                Thread.sleep(5000); //el hilo principal se coloca en espera durante 5 seg y luego suspende los hilos
                 monitor.suspenderHilos();
                 
                 for(int i = 0; i < threads.size(); i++){
-                    System.out.println(threads.get(i).getName()+" ha procesado: "+threads.get(i).getDatos());
+                    System.out.println(threads.get(i).getName()+" ha procesado: "+threads.get(i).getDatos()); // muestra el número de digitos que han procesado los hilos
                     current += bytesToHex(threads.get(i).getDigits());      
                 }
-                System.out.println("Así va la cadena: "+ current);
+                System.out.println("Así va la cadena: "+ current); //muestra el proceso de la cadena
                 Scanner escaner = new Scanner(System.in);
                 System.out.println("Presione enter para continuar");
                 String entrada = escaner.nextLine();
                 
-                monitor.reanudarHilos(); 
+                monitor.reanudarHilos(); //reanuda los hilos nuevamente
             } catch (InterruptedException e){
                 e.printStackTrace();
             }
